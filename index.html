@@ -1,27 +1,149 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Tayeon Album</title>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-        <a href="index.html"><h1>태연의 음반</h1></a>
-        <ol>
-            <a href="1.html"><li>태연 My voice</li></a>
-            <a href="2.html"><li>Fine</li></a>
-            <a href="3.html"><li>Time Lapse</li></a>
-        </ol>
-        <h2>태연의 음반</h2>
-        <p>
-            2000년대 초 소녀시대로 데뷔한 태연은 2015년, 멤버 중 첫번 째로 솔로데뷔에 성공한다.<br>뛰어나고 특출난 가창력으로대중의 귀를 사로잡은 가수이다.
-            <a href="https://www.melon.com/artist/album.htm?artistId=236797">태연의 앨범 목록</a>은 이러하다. 2024년 8월 현재 한국 앨범만 18개이다.<br>
-            돌아오는 9월 팬들은 컴백을 기다리고 있다! 태연은 본인의 보컬을 이와같이 생각한다.<br>
-            (에디터)<br>
-            ‘혼자서 걸어요’라는 곡을 소개할 때 스스로의 목소리를 “까끌까끌하고 담담한 보컬”이라고 표현했어요.<br>평소 보컬리스트 태연의 목소리를 어떻게 생각하나요?<br> 
-            (태연)<br>
-            이름이랑 똑같은 것 같아요. 목소리가 태연해요. 격하게 흥분하는 것도 아니고,<br>슬픔에 사무친 것도 아니고 담담한 느낌요.
-            (출처:23년도 BAZAAR 태연 인터뷰)
-        </p>
-    </body>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>한글 겸용 타자기</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+    .keyboard {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 20px;
+    }
+    .row {
+      display: flex;
+      margin: 5px;
+    }
+    .key {
+      width: 40px;
+      height: 40px;
+      margin: 2px;
+      line-height: 40px;
+      text-align: center;
+      background-color: #ddd;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+    .key.highlight {
+      background-color: yellow;
+    }
+    .label-output {
+      border: 1px solid black;
+      width: 400px;
+      height: 50px;
+      margin: 20px auto;
+      line-height: 50px;
+      font-size: 24px;
+      background-color: #f9f9f9;
+    }
+    .info {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+
+  <h2>Typewriter</h2>
+  <div class="info">한양 빅데이터 2302584 임희연</div>
+
+
+  <div class="label-output" id="display"></div>
+
+
+  <div>
+    <button onclick="toggleLanguage()">한/영 전환 (현재: <span id="lang">영어</span>)</button>
+  </div>
+
+
+  <div class="keyboard" id="keyboard"></div>
+
+
+  <script>
+    let isKorean = false;
+    const display = document.getElementById('display');
+    const keyboard = document.getElementById('keyboard');
+    const langLabel = document.getElementById('lang');
+    const engRows = [
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l'],
+      ['z','x','c','v','b','n','m','.']
+    ];
+    const korRows = [
+      ['ㅂ','ㅈ','ㄷ','ㄱ','ㅅ','ㅛ','ㅕ','ㅑ','ㅐ','ㅔ'],
+      ['ㅁ','ㄴ','ㅇ','ㄹ','ㅎ','ㅗ','ㅓ','ㅏ','ㅣ'],
+      ['ㅋ','ㅌ','ㅊ','ㅍ','ㅠ','ㅜ','ㅡ','.']
+    ];
+
+
+    function renderKeyboard() {
+      keyboard.innerHTML = '';
+      const rows = isKorean ? korRows : engRows;
+      rows.forEach(row => {
+        const div = document.createElement('div');
+        div.className = 'row';
+        row.forEach(char => {
+          const btn = document.createElement('div');
+          btn.className = 'key';
+          btn.textContent = char;
+          btn.dataset.char = char;
+          div.appendChild(btn);
+        });
+        keyboard.appendChild(div);
+      });
+    }
+
+
+    function toggleLanguage() {
+      isKorean = !isKorean;
+      langLabel.textContent = isKorean ? '한글' : '영어';
+      renderKeyboard();
+    }
+
+
+    function flashKey(char) {
+      const keys = document.querySelectorAll('.key');
+      keys.forEach(key => {
+        if (key.dataset.char === char) {
+          key.classList.add('highlight');
+          setTimeout(() => key.classList.remove('highlight'), 200);
+        }
+      });
+    }
+
+
+    function handleKeyPress(e) {
+      let char = e.key.toLowerCase();
+      if (char === 'process' || char === 'hanja') return;
+
+
+      if (char === '.') {
+        toggleLanguage();
+        return;
+      }
+
+
+      // 입력 가능한 키만 출력
+      const validChars = (isKorean ? korRows.flat() : engRows.flat());
+      if (validChars.includes(char)) {
+        flashKey(char);
+        display.textContent += char;
+      }
+    }
+
+
+    document.addEventListener('keydown', handleKeyPress);
+    renderKeyboard();
+  </script>
+
+
+</body>
 </html>
-    
